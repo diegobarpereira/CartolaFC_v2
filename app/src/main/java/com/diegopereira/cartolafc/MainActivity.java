@@ -23,7 +23,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-
+    //Teste GIT
+    //Teste
     private Button button;
 
     private TextView tv_rodada, tv_status, tv_times_escalados, tv_fechamento;
