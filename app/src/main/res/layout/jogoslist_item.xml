@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:columnCount="7"
+        android:rowCount="1">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_column="0"
+        android:layout_row="0"
+        android:id="@+id/img_clube1"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="5dp"
+        android:src="@android:drawable/ic_dialog_info" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_clube1"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="clube1"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:textAlignment="center"
+        android:layout_column="1"
+        android:layout_row="0"/>
+
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_placar1"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:text="0"
+            android:textSize="14sp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:textAlignment="center"
+            android:layout_column="2"
+            android:layout_row="0"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:text="X"
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:textAlignment="center"
+            android:layout_column="3"
+            android:layout_row="0"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_placar2"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:text="0"
+            android:textSize="14sp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:textAlignment="center"
+            android:layout_column="4"
+            android:layout_row="0"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_clube2"
+            android:layout_width="105dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="clube2"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:textAlignment="center"
+            android:layout_column="5"
+            android:layout_row="0"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_column="6"
+            android:layout_row="0"
+            android:id="@+id/img_clube2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="4dp"
+            android:layout_marginRight="8dp"
+            android:src="@android:drawable/ic_dialog_info" />
+    </GridLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textAlignment="center"
+        android:columnCount="1"
+        android:rowCount="1"
+        tools:ignore="RtlCompat">
+
+    <TextView
+        android:id="@+id/tv_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="data"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:layout_column="0"
+        android:layout_row="0"/>
+
+
+
+    </GridLayout>
+
+</LinearLayout>
+</LinearLayout>

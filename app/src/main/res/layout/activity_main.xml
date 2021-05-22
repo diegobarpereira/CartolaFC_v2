@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/pullToRefresh3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <GridLayout
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="4">
+
+
+            <TextView
+                android:id="@+id/rodada"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Rodada: "
+                android:layout_column="0"
+                android:layout_row="0"/>
+
+            <TextView
+                android:id="@+id/tv_rodada"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text=""
+                android:layout_column="1"
+                android:layout_row="0"/>
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Status: "
+                android:layout_column="0"
+                android:layout_row="1"/>
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text=""
+                android:layout_column="1"
+                android:layout_row="1"/>
+
+            <TextView
+                android:id="@+id/times_escalados"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Times Escalados: "
+                android:layout_column="0"
+                android:layout_row="2"/>
+
+            <TextView
+                android:id="@+id/tv_times_escalados"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text=""
+                android:layout_column="1"
+                android:layout_row="2"/>
+
+            <TextView
+                android:id="@+id/fechamento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Fechamento do Mercado: "
+                android:layout_column="0"
+                android:layout_row="3"/>
+
+            <TextView
+                android:id="@+id/tv_fechamento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text=""
+                android:layout_column="1"
+                android:layout_row="3"/>
+
+
+
+        </GridLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

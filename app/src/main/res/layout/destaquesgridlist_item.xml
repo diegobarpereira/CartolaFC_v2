@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:columnCount="2"
+    android:rowCount="2"
+    android:orientation="horizontal"
+    android:layout_centerHorizontal="true">
+
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/pos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="0"
+        android:layout_column="0"
+        android:layout_margin="5dp"
+        android:text="pos"
+        android:textSize="16sp"
+        android:layout_marginTop="20dp"
+        android:translationZ="90dp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_actordob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="0"
+        android:layout_column="0"
+        android:layout_margin="5dp"
+        android:text="escalacoes"
+        android:textSize="12sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="0dp"
+        android:translationZ="90dp"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_gravity="center"
+        android:id="@+id/img_actorimage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_margin="5dp"
+        android:src="@android:drawable/ic_dialog_info"
+        android:layout_column="0"
+        android:layout_row="0"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_column="0"
+        android:layout_row="0"
+        android:id="@+id/img_clube"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="5dp"
+        android:src="@android:drawable/ic_dialog_info"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="115dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_actorname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="name"
+        android:layout_gravity="center"
+        android:layout_marginTop="140dp"
+        android:textSize="18sp"
+        android:layout_column="0"
+        android:layout_row="0"  />
+
+</GridLayout>

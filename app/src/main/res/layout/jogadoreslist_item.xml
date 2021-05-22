@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_player"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_margin="5dp"
+        android:src="@android:drawable/ic_dialog_info"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_toRightOf="@+id/img_player"
+        android:id="@+id/tv_player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="Jogador"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_traco2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/tv_player"
+        android:text="-"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_toRightOf="@+id/tv_traco2"
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="Status"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_posicao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_player"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toRightOf="@+id/img_player"
+        android:text="Posição"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_traco"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_player"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/tv_posicao"
+        android:text="-"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_clube"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_player"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/tv_traco"
+        android:text="Clube"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_preco"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:text="Preço"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_media"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/tv_preco"
+        android:text="Media"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_ultima"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/tv_media"
+        android:text="Ultima"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+</RelativeLayout>
