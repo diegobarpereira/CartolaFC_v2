@@ -40,6 +40,8 @@
         <activity android:name=".WebViewActivity" />
 
         <service android:name=".JogosActivityBkp" />
+        <service android:name=".ChamadaMetodo" >
+        </service>
 
     </application>
 

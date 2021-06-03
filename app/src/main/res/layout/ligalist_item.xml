@@ -32,7 +32,6 @@
         android:src="@drawable/cap"
         tools:ignore="MissingConstraints" />
 
-
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_toRightOf="@+id/img_clube"
         android:id="@+id/tv_jogador"
@@ -44,19 +43,6 @@
         android:textSize="12sp"
         android:textAlignment="center"
         tools:ignore="MissingConstraints,RtlCompat" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_toRightOf="@+id/tv_jogador"
-        android:id="@+id/atletaId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="Jogador"
-        android:textStyle="bold"
-        android:textSize="12sp"
-        android:textAlignment="center"
-        tools:ignore="MissingConstraints,RtlCompat" />
-
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_posicao"

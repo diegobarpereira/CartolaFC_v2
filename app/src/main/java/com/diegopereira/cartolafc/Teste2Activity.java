@@ -379,12 +379,6 @@ public class Teste2Activity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.liga) {
-            Intent intent = new Intent(getApplicationContext(), Teste2Activity.class);
-            startActivity(intent);
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

@@ -12,14 +12,12 @@
         android:id="@+id/jogadores"/>
     <item android:title="Parciais"
         android:id="@+id/parciais"/>
-    <item android:title="Liga"
-        android:id="@+id/liga"/>
-    <item android:title="Classificação"
-        android:id="@+id/classi"/>
     <item android:title="Login"
         android:id="@+id/login"/>
     <item android:title="Liga Auth"
         android:id="@+id/ligaauth"/>
     <item android:title="Groups"
         android:id="@+id/groups"/>
+    <item android:title="Classificação"
+        android:id="@+id/classi"/>
 </menu>

@@ -39,7 +39,7 @@
             android:id="@+id/img_time"
             android:layout_width="135dp"
             android:layout_height="45dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="4dp"
             android:layout_marginBottom="3dp"
             android:src="@android:drawable/ic_dialog_info" />
 

@@ -1,10 +1,15 @@
 package com.diegopereira.cartolafc;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -25,25 +30,20 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.diegopereira.cartolafc.liga.APIInterface;
 import com.diegopereira.cartolafc.liga.Atleta;
+import com.diegopereira.cartolafc.liga.Clubes;
 import com.diegopereira.cartolafc.liga.LigaRecyclerAdapter;
 import com.diegopereira.cartolafc.liga.LigaRodadaAdapter;
 import com.diegopereira.cartolafc.liga.Players;
+import com.diegopereira.cartolafc.liga.Posicoes;
 import com.diegopereira.cartolafc.liga.ServiceGenerator;
 import com.diegopereira.cartolafc.liga.Teste;
-import com.diegopereira.cartolafc.parciais.Parciais;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.diegopereira.cartolafc.parciais.Atletas;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -51,29 +51,24 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.diegopereira.cartolafc.MainActivity.MAIN_SHARED_PREF;
 import static com.diegopereira.cartolafc.MainActivity.SHAREDMAIN_PREF_NAME;
-//import static com.diegopereira.cartolafc.teste.RecyclerRodadaAdapter.TOTAL_SHARED_PREF;
-//import static com.diegopereira.cartolafc.teste.RecyclerRodadaAdapter.QTY_SHARED_PREF;
-
-import static com.diegopereira.cartolafc.league.MyParcialSection.TOTAL_SHARED_PREF;
 import static com.diegopereira.cartolafc.league.MyParcialSection.QTY_SHARED_PREF;
+import static com.diegopereira.cartolafc.league.MyParcialSection.TOTAL_SHARED_PREF;
 
 
-public class LigaActivity extends AppCompatActivity {
+public class LigaActivity extends AppCompatActivity implements ServiceConnection {
+    private ChamadaMetodo s;
 
     RecyclerView recyclerView;
     List<Atleta> list = new ArrayList<>();
-    List<Teste> tmpList = new ArrayList<>();
-    List<Teste> newlist = new ArrayList<>();
-    Map<String, Double> mapliga;
-    Map<String, Double> mapparciais;
-    Integer capitao, atleta_id, idgol, idlat, idzag, idmei, idata, idtec, jogador_id;
+    Map<Integer, Clubes> clubes = new HashMap();
+    Map<Integer, Posicoes> posicoes = new HashMap();
+    Integer capitao, atleta_id;
     String timename, image, atleta_ids;
     Double timepts, timetot, pontos;
+    List<Map.Entry<String, Atletas>> wordList = new ArrayList<Map.Entry<String, Atletas>>();
 
     String vault = "";
     String qty = "";
@@ -88,9 +83,10 @@ public class LigaActivity extends AppCompatActivity {
     LigaRodadaAdapter rodadapter;
 
     SharedPreferences preferences;
+    SharedPreferences sharedPref;
 
     @Override
-    protected void onCreate( Bundle savedInstanceState ) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liga);
 
@@ -110,43 +106,44 @@ public class LigaActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
-        //preferences = getSharedPreferences(SHARED_PREF_ID, MODE_PRIVATE);
         preferences = getSharedPreferences("SHARED_PREF_ID", MODE_PRIVATE);
 
-        //time_id = preferences.getString(ID_SHARED_PREF, "");
         time_id = preferences.getString("ID_SHARED_PREF", "");
 
         qty = preferences.getString(QTY_SHARED_PREF, String.valueOf("0/0"));
 
-        SharedPreferences sharedPref = getSharedPreferences(SHAREDMAIN_PREF_NAME, MODE_PRIVATE);
-        stat = sharedPref.getString(MAIN_SHARED_PREF, "N/A");
+        sharedPref = getSharedPreferences(SHAREDMAIN_PREF_NAME, MODE_PRIVATE);
+        //stat = sharedPref.getString(MAIN_SHARED_PREF, "N/A");
+        stat = "2";
 
         if (stat.equals("1")) {
             loadLiga();
-            loadParciais();
 
-        } if (stat.equals("2")) {
-            loadLiga();
-            loadParciais();
         }
+        if (stat.equals("2")) {
+            //loadLiga();
 
-
+            Handler handler = new Handler();
+            long delay = 2000; // tempo de delay em millisegundos
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    loadParciais();
+                }
+            }, delay);
+        }
 
         final SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefresh6);
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                SharedPreferences sharedPref = getSharedPreferences(SHAREDMAIN_PREF_NAME, MODE_PRIVATE);
-                stat = sharedPref.getString(MAIN_SHARED_PREF, "N/A");
 
                 if (stat.equals("1")) {
                     adapter.notifyDataSetChanged();
                     loadLiga(); // your code
-                    loadParciais();
 
                 }
                 if (stat.equals("2")) {
-                    loadLiga();
+                    //loadLiga();
                     rodadapter.notifyDataSetChanged();
                     loadParciais();
                 }
@@ -155,21 +152,30 @@ public class LigaActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = new Intent(this, ChamadaMetodo.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(this);
+    }
 
     public void loadLiga() {
 
         APIInterface status = ServiceGenerator.getRetrofit().create(APIInterface.class);
-        //Call<Players> call = status.getPlayers();
         Call<Players> call = status.getTime(String.valueOf(time_id));
 
         call.enqueue(new Callback<Players>() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
-            public void onResponse( Call<Players> call, Response<Players> response ) {
+            public void onResponse(Call<Players> call, Response<Players> response) {
                 if (response.isSuccessful()) {
                     timename = response.body().getTime().getNome();
                     tv_timename.setText(timename);
@@ -180,11 +186,8 @@ public class LigaActivity extends AppCompatActivity {
                             .load(image)
                             .into(img_time);
 
-
-                    System.out.println("GETAtl: " + stat + ":" + response.body().getRodadaAtual());
-                    int rodadaatual = response.body().getRodadaAtual();
-                    if((stat.equals("1")) && (String.valueOf(rodadaatual).equals("1"))) {
-                   // if (mensagem.contains("Este time ainda não foi escalado na temporada.") || (response.body().getAtletas().isEmpty())) {
+                    String rodadaatual = MainActivity.rodada;
+                    if (stat.equals("1") && (String.valueOf(rodadaatual).equals("1"))) {
                         Toast toast = Toast.makeText(getApplicationContext(), "Este time ainda não foi \n escalado na temporada.", Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0);
                         LinearLayout toastLL = (LinearLayout) toast.getView();
@@ -195,19 +198,8 @@ public class LigaActivity extends AppCompatActivity {
                         toastTV.setTextSize(22);
                         toast.show();
                     } else {
-                        System.out.println("Rodada Atual: " + response.body().getRodadaAtual());
-                        System.out.println("Mensagem: " + response.body().getMensagem());
+
                         list = response.body().getAtletas();
-
-                        idgol = response.body().getPosicoes().get1().getId();
-                        idlat = response.body().getPosicoes().get2().getId();
-                        idzag = response.body().getPosicoes().get3().getId();
-                        idmei = response.body().getPosicoes().get4().getId();
-                        idata = response.body().getPosicoes().get5().getId();
-                        idtec = response.body().getPosicoes().get6().getId();
-
-                        //System.out.println("ID1: " + idgol + " ID2: " + idlat + " ID3: " + idzag + " ID4: " + idmei +
-                        //                   " ID5: " + idata + " ID6: " + idtec);
 
                         Collections.sort(list, new Comparator<Atleta>() {
                             @Override
@@ -219,26 +211,10 @@ public class LigaActivity extends AppCompatActivity {
                         capitao = response.body().getCapitaoId();
                         atleta_id = response.body().getTime().getTimeId();
 
-
-
-                        //
-                        mapliga = new HashMap<>();
-                        for (int i = 0; i < 12; i++) {
-                            jogador_id = response.body().getAtletas().get(i).getAtletaId();
-
-                            Teste newtemp = new Teste();
-                            newtemp.setId(String.valueOf(jogador_id));
-                            //newtemp.setPontuacao(pontos);
-
-                            tmpList.add(newtemp);
-
-                            mapliga.put(String.valueOf(jogador_id), 0.0);
-                            //System.out.println("JOGADOR_ID:" + jogador_id);
-                        }
-                        SharedPreferences sharedPref = getSharedPreferences(SHAREDMAIN_PREF_NAME, MODE_PRIVATE);
-
                         stat = sharedPref.getString(MAIN_SHARED_PREF, "N/A");
 
+                        clubes = response.body().getClubes();
+                        posicoes = response.body().getPosicoes();
 
                         if (stat.equals("1")) {
                             timepts = response.body().getPontos();
@@ -246,154 +222,107 @@ public class LigaActivity extends AppCompatActivity {
                             timetot = response.body().getPontosCampeonato();
                             tv_timetot.setText(String.format(Locale.US, "%.2f", timetot));
                             tv_qty.setVisibility(View.INVISIBLE);
-                            adapter = new LigaRecyclerAdapter(getApplicationContext(), list, capitao, idgol, idlat, idzag, idmei, idata, idtec, mapliga);
+                            adapter = new LigaRecyclerAdapter(getApplicationContext(), list, capitao, posicoes, clubes);
                             adapter.notifyDataSetChanged();
                             recyclerView.setAdapter(adapter);
-
-
                         }
-                        if (stat.equals("2")) {
-                            loadParciais();
 
-                            vault = preferences.getString(TOTAL_SHARED_PREF, String.valueOf(0.0));
-                            qty = preferences.getString(QTY_SHARED_PREF, String.valueOf("0/0"));
-
-                            Double vvault = Double.valueOf(vault);
-                            Double timepts_ = (vvault);
-                            tv_timepts.setText(String.format(Locale.US, "%.2f", timepts_));
-
-                            tv_qty.setText(qty);
-
-                            timetot = response.body().getPontosCampeonato();
-                            tv_timetot.setText(String.format(Locale.US, "%.2f", (timetot + timepts_)));
-
-                        }
                     }
                 }
 
             }
 
             @Override
-            public void onFailure( Call<Players> call, Throwable t ) {
+            public void onFailure(Call<Players> call, Throwable t) {
                 Log.e("ERROR", t.getMessage());
             }
         });
     }
 
-
     public void loadParciais() {
 
-        final Gson gson = new GsonBuilder()
-                .setLenient()
-                .serializeNulls()
-                .create();
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                //.baseUrl("https://jsonkeeper.com")
-                .baseUrl(CONSTANTS.BASE_URL)
-                .build();
-        com.diegopereira.cartolafc.parciais.APIInterface requestInterface = retrofit.create(com.diegopereira.cartolafc.parciais.APIInterface.class);
-        Call<Parciais> call2 = requestInterface.getAtletas();
+        APIInterface status = ServiceGenerator.getRetrofit().create(APIInterface.class);
+        Call<Players> call = status.getTime(String.valueOf(time_id));
 
-        call2.enqueue(new Callback<Parciais>() {
-
+        call.enqueue(new Callback<Players>() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
-            public void onResponse( Call<Parciais> call, Response<Parciais> response ) {
-                if (response.code() == 200) {
+            public void onResponse(Call<Players> call, Response<Players> response) {
+                if (response.isSuccessful()) {
 
-                    try {
-                        // edited here ,add toJson
-                        String jsonResponse = new Gson().toJson(response.body());
-                        JSONObject jsonObject = null;
-                        Map<String, Integer> map = null;
+                    vault = preferences.getString(TOTAL_SHARED_PREF, String.valueOf(0.0));
+                    qty = preferences.getString(QTY_SHARED_PREF, String.valueOf("0/0"));
 
-                        if (jsonResponse != null) {
-                            try {
-                                jsonObject = new JSONObject(jsonResponse);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                    Double vvault = Double.valueOf(vault);
+                    Double timepts_ = (vvault);
+                    tv_timepts.setText(String.format(Locale.US, "%.2f", timepts_));
 
-                            String rodada = jsonObject.optString("rodada");
-                            JSONObject key2 = jsonObject.optJSONObject("atletas");
+                    tv_qty.setText(qty);
 
-                            Iterator<String> sIterator = key2.keys();
+                    timetot = response.body().getPontosCampeonato();
+                    tv_timetot.setText(String.format(Locale.US, "%.2f", (timetot + timepts_)));
 
-                            mapparciais = new HashMap<>();
+                    timename = response.body().getTime().getNome();
+                    tv_timename.setText(timename);
 
-                            while (sIterator.hasNext()) {
-                                atleta_ids = sIterator.next();
-                                JSONObject atletas = key2.optJSONObject(atleta_ids);
+                    image = response.body().getTime().getUrlEscudoPng();
 
-                                String apelido = atletas.getString("apelido");
+                    Picasso.with(getApplicationContext())
+                            .load(image)
+                            .into(img_time);
 
-                                pontos = atletas.getDouble("pontuacao");
-                                //System.out.println("Atletas IDS: " + atleta_ids);
+                    list = response.body().getAtletas();
 
-                                mapparciais.put(atleta_ids, pontos);
-                                //System.out.println("MAPPARCIAISACT: " + mapparciais);
-
-                                Teste tmp = new Teste();
-                                tmp.setId(atleta_ids);
-                                //tmp.setApelido(apelido);
-                                tmp.setPontuacao(pontos);
-
-                                JSONObject scouts = atletas.optJSONObject("scout");
-
-                                map = new HashMap<>();
-                                ;
-                                String chave = "";
-                                int valor = 0;
-                                if (scouts != null) {
-                                    JSONArray scoutsTags = atletas.getJSONObject("scout").names();
-
-                                    if (scoutsTags != null) {
-                                        //System.out.println("scoutsTags: " + scoutsTags);
-                                        for (int i = 0; i < scoutsTags.length(); i++) {
-                                            chave = scoutsTags.getString(i);
-
-                                            valor = scouts.getInt(chave);
-
-                                            //System.out.println("CHAVE: " + chave + " VALOR: " + valor);
-
-
-                                            map.put(chave, valor);
-                                            //System.out.println("MAP: " + map);
-
-
-                                        }
-
-
-                                    }
-                                }
-
-                                tmp.setScout(map);
-                                newlist.add(tmp);
-
-
-
-                            }
+                    Collections.sort(list, new Comparator<Atleta>() {
+                        @Override
+                        public int compare(Atleta o1, Atleta o2) {
+                            return o1.getPosicaoId().compareTo(o2.getPosicaoId());
                         }
+                    });
 
-                        rodadapter = new LigaRodadaAdapter(getApplicationContext(), list, capitao, idgol, idlat, idzag, idmei, idata, idtec, mapparciais, mapliga);
-                        rodadapter.notifyDataSetChanged();
-                        recyclerView.setAdapter(rodadapter);
+                    capitao = response.body().getCapitaoId();
+                    atleta_id = response.body().getTime().getTimeId();
+                    clubes = response.body().getClubes();
+                    posicoes = response.body().getPosicoes();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    Intent service = new Intent(getApplicationContext(), ChamadaMetodo.class);
+                    getApplicationContext().startService(service);
+
+                    if (s != null) {
+                        Toast.makeText(getApplicationContext(), "Number of elements: " + s.getWordList().size(),
+                                Toast.LENGTH_SHORT).show();
+                        wordList.clear();
+                        wordList.addAll(s.getWordList());
+
                     }
 
-
+                    rodadapter = new LigaRodadaAdapter(getApplicationContext(), list, capitao, posicoes, clubes, wordList);
+                    rodadapter.notifyDataSetChanged();
+                    recyclerView.setAdapter(rodadapter);
                 }
             }
 
             @Override
-            public void onFailure( Call<Parciais> call, Throwable t ) {
-                System.out.println(t.getMessage());
+            public void onFailure(Call<Players> call, Throwable t) {
+                Log.e("ERROR", t.getMessage());
             }
         });
+
     }
+
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder binder) {
+        ChamadaMetodo.MyBinder b = (ChamadaMetodo.MyBinder) binder;
+        s = b.getService();
+        Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        s = null;
+    }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -402,13 +331,13 @@ public class LigaActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected( MenuItem item ) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.menu_mais) {
@@ -435,13 +364,26 @@ public class LigaActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.liga) {
-            Intent intent = new Intent(getApplicationContext(), LigaActivity.class);
+        if (id == R.id.classi) {
+            Intent intent = new Intent(getApplicationContext(), ClassificacaoActivity.class);
             startActivity(intent);
             return true;
         }
-
-
+        if (id == R.id.login) {
+            Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        if (id == R.id.ligaauth) {
+            Intent intent = new Intent(getApplicationContext(), LigaAuthActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        if (id == R.id.groups) {
+            Intent intent = new Intent(getApplicationContext(), FavoritosActivity.class);
+            startActivity(intent);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

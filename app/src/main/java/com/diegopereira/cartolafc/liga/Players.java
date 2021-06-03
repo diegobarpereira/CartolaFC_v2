@@ -1,6 +1,8 @@
 package com.diegopereira.cartolafc.liga;
 
     import java.util.List;
+    import java.util.Map;
+
     import com.google.gson.annotations.Expose;
     import com.google.gson.annotations.SerializedName;
 
@@ -9,12 +11,12 @@ package com.diegopereira.cartolafc.liga;
         @SerializedName("atletas")
         @Expose
         private List<Atleta> atletas = null;
-        /*@SerializedName("clubes")
+        @SerializedName("clubes")
         @Expose
-        private Clubes clubes;*/
+        private Map<Integer, Clubes> clubes;
         @SerializedName("posicoes")
         @Expose
-        private Posicoes posicoes;
+        private Map<Integer, Posicoes> posicoes;
         /*@SerializedName("status")
         @Expose
         private Status status;*/
@@ -55,30 +57,31 @@ package com.diegopereira.cartolafc.liga;
             this.atletas = atletas;
         }
 
-        /*public Clubes getClubes() {
+        public Map<Integer, Clubes> getClubes() {
             return clubes;
         }
 
-        public void setClubes(Clubes clubes) {
+        public void setClubes(Map<Integer, Clubes> clubes) {
             this.clubes = clubes;
         }
-*/
-        public Posicoes getPosicoes() {
+
+        public Map<Integer, Posicoes> getPosicoes() {
             return posicoes;
         }
 
-        public void setPosicoes(Posicoes posicoes) {
+        public void setPosicoes(Map<Integer, Posicoes> posicoes) {
             this.posicoes = posicoes;
         }
-/*
-        public Status getStatus() {
-            return status;
-        }
 
-        public void setStatus(Status status) {
-            this.status = status;
-        }
-*/
+        /*
+                public Status getStatus() {
+                    return status;
+                }
+
+                public void setStatus(Status status) {
+                    this.status = status;
+                }
+        */
         public Integer getEsquemaId() {
             return esquemaId;
         }

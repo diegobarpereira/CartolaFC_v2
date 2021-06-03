@@ -70,6 +70,9 @@ public class FavoritosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.favoritos);
 
+        assert getSupportActionBar() != null;   //null check
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);   //show back button
+
         database = new DatabaseHelper(getApplicationContext());
         time_id = database.getIds();
 
@@ -141,13 +144,17 @@ public class FavoritosActivity extends AppCompatActivity {
                             timePontos.setTimeId(Integer.valueOf(time_id.get(finalI).getTimeId().toString()));
                             teste.add(timePontos);
 
-                            Collections.sort(teste, new Comparator<TimePontos>() {
-                                @Override
-                                public int compare( TimePontos o1, TimePontos o2 ) {
-                                    return o2.getPontos().compareTo(o1.getPontos());
-                                }
-                            });
 
+                            if (response.body().getPontos() == null ) {
+
+                            } else {
+                                Collections.sort(teste, new Comparator<TimePontos>() {
+                                    @Override
+                                    public int compare(TimePontos o1, TimePontos o2) {
+                                        return o2.getPontos().compareTo(o1.getPontos());
+                                    }
+                                });
+                            }
 
 
                             rv_fav.setAdapter(sectionAdapter);
@@ -269,7 +276,11 @@ public class FavoritosActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

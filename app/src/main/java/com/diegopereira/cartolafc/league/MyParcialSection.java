@@ -3,6 +3,7 @@ package com.diegopereira.cartolafc.league;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
 import android.widget.Toast;
@@ -14,6 +15,10 @@ import com.bumptech.glide.Glide;
 import com.diegopereira.cartolafc.LeagueActivity;
 import com.diegopereira.cartolafc.LigaActivity;
 import com.diegopereira.cartolafc.R;
+import com.diegopereira.cartolafc.liga.Atleta;
+import com.diegopereira.cartolafc.parciais.Atletas;
+import com.diegopereira.cartolafc.parciais.Clubes;
+import com.diegopereira.cartolafc.parciais.Posicoes;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -25,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
@@ -36,7 +42,8 @@ import static java.lang.Boolean.TRUE;
 public class MyParcialSection extends StatelessSection {
     String title;
     List<Times> list;
-    List<TimePontos> teste;
+    List<Map.Entry<String, Atletas>> wordList = new ArrayList<Map.Entry<String, Atletas>>();
+    List<com.diegopereira.cartolafc.teste.Atletas> atletas;
     Context context;
     Map<String, Double> mapparciais;
     Map<String, Double> mapliga;
@@ -53,8 +60,7 @@ public class MyParcialSection extends StatelessSection {
     public static final String QTY_SHARED_PREF = "qty";
 
 
-
-    public MyParcialSection( Context context, String title, List<TimePontos> teste, Map<String, Double> mapparciais) {
+    public MyParcialSection(Context context, String title, List<Times> list, List<com.diegopereira.cartolafc.teste.Atletas> atletas, List<Map.Entry<String, Atletas>> wordList) {
         // call constructor with layout resources for this Section header, footer and items
         super(SectionParameters.builder()
                 .itemResourceId(R.layout.leaguelist_item)
@@ -63,7 +69,8 @@ public class MyParcialSection extends StatelessSection {
 
         this.title = title;
         this.list = list;
-        this.teste = teste;
+        this.wordList = wordList;
+        this.atletas = atletas;
         this.context = context;
         this.mapparciais = mapparciais;
 
@@ -73,7 +80,7 @@ public class MyParcialSection extends StatelessSection {
 
     @Override
     public int getContentItemsTotal() {
-        return teste.size();
+        return list.size();
     }
 
     @Override
@@ -88,292 +95,111 @@ public class MyParcialSection extends StatelessSection {
         MyItemViewHolder itemViewHolder = (MyItemViewHolder) holder;
 
         DecimalFormat formatter = new DecimalFormat("##0.00", new DecimalFormatSymbols(Locale.US));
+        Double diff = 0.00;
 
+        String ids_parciais = wordList.get(position).getKey();
+        //System.out.println("IDS: " + ids_parciais);
 
-
-        Integer get_cap = teste.get(position).getCapitaoId();
-
-
-
-
-        Integer jogador_id = 0;
-        mapliga = new HashMap<>();
-        for (int i = 0; i < 12; i++) {
-            jogador_id = teste.get(position).getAtletas().get(i).getAtletaId();
-
-            mapliga.put(String.valueOf(jogador_id), 0.0);
-
-
+        String atletas_ids = null;
+        for (int j = 0; j < 12; j++) {
+            atletas_ids = String.valueOf(atletas.get(j).getAtletaId());
+            //System.out.println("Atletas_IDS: " + atletas_ids);
         }
 
-        HashMap<String, Double> teste_ = new HashMap<>();
-        double total = 0.0;
-        double totalcap = 0.0;
-        String ttotal = "";
-        double x = 0.0;
-        for (Map.Entry<String, Double> hashmap : mapparciais.entrySet()) {
-            if (mapliga.containsKey(hashmap.getKey())) {
-                //System.out.println(hashmap.getKey() + " - " + hashmap.getValue());
-                mapparciais.put(hashmap.getKey(), hashmap.getValue());
-
-                teste_.put(hashmap.getKey(), hashmap.getValue());
-
-            }
-
-            if (hashmap.getKey().contains(String.valueOf(get_cap))) {
-
-                x = hashmap.getValue();
-                //System.out.println("X: " + x);
-
-            }
+        String soma = "";
+        List<com.diegopereira.cartolafc.teste.Atletas> pts = atletas.stream().filter(e -> wordList.contains(e)).collect(Collectors.toList());
+        System.out.println(pts);
+        if (String.valueOf(atletas_ids).contains(ids_parciais)) {
+            System.out.println("Sim");
+            soma = String.valueOf(wordList.get(position).getValue().getPontuacao());
 
         }
+        itemViewHolder.ultima.setText(soma);
 
-        for (String k : teste_.keySet()) {
-            //System.out.println(k + "\t" + teste_.get(k));
+        for (int i = 0; i < position; i++) {
+            itemViewHolder.dif.setVisibility(View.VISIBLE);
 
-            total += teste_.get(k);
-            totalcap = (total + x);
-            ttotal = formatter.format(totalcap);
+            if (list.get(position).getPontos().getCampeonato() == null) {
 
-            for (int i = 0; i < teste.size(); i++) {
-                teste.get(i).setParciais(totalcap);
-                //teste.get(i).setParciais(0.0);
+            } else {
+                diff = list.get(position).getPontos().getCampeonato() - list.get(0).getPontos().getCampeonato();
             }
-
-            //System.out.println("SUM: " + ttotal);
-            //holder.parciais.setText(ttotal); //
         }
 
-        Integer id = 0;
-        String qty = "";
-        Double parc = 0.0;
-        for (int i = 0; i < teste.size(); i++) {
-            Double pontototal = teste.get(i).getPontos() + totalcap;
-            //Double pontototal = teste.get(i).getPontos();
 
-            qty = (teste_.size() + "/" + mapliga.size());
-            parc = teste.get(i).getParciais();
-            teste.get(i).setPontosrod(pontototal);
-            teste.get(i).setQty(qty);
-
-
-
-
-
-                database.update(position+1, teste.get(position).getNome(), teste.get(position).getParciais(), teste.get(position).getPontosrod(),
-                        teste.get(position).getUrlEscudoPng(), teste.get(position).getQty(), teste.get(position).getTimeId());
-
+        if (position == 0) {
+            itemViewHolder.dif.setVisibility(View.INVISIBLE);
         }
 
-        /*
-            List<TimePontos> item = database.getTimes();
+        if (diff == null) {
+            itemViewHolder.dif.setText("0.00");
+        } else {
+            itemViewHolder.dif.setText(String.valueOf(formatter.format(diff)));
+        }
 
-            Glide.with(context)
-                    .load(item.get(position).getUrlEscudoPng())
-                    .into(itemViewHolder.img_player);
+        String name = list.get(position).getNome();
+        itemViewHolder.name.setText(name);
 
-            itemViewHolder.name.setText(item.get(position).getNome());
-            itemViewHolder.ultima.setText(formatter.format(item.get(position).getParciais()));
-            itemViewHolder.points.setText(formatter.format(item.get(position).getPontosrod()));
-
-            itemViewHolder.cash.setText(item.get(position).getQty());
-
-            itemViewHolder.pos.setText(String.valueOf(position + 1));
-            itemViewHolder.var.setVisibility(View.GONE);
-            itemViewHolder.dif.setVisibility(View.GONE);
-
-            System.out.println("LEN: " + (item.size() - 1));
-
-         */
-            List<TimePontos> item = database.getTimes();
-
-            if ( k == 0 ) {
-                //item = database.getTimes();
-
-                Glide.with(context)
-                        .load(item.get(position).getUrlEscudoPng())
-                        .into(itemViewHolder.img_player);
-
-                itemViewHolder.name.setText(item.get(position).getNome());
-                itemViewHolder.ultima.setText(formatter.format(item.get(position).getParciais()));
-                itemViewHolder.points.setText(formatter.format(item.get(position).getPontosrod()));
-
-                itemViewHolder.cash.setText(item.get(position).getQty());
+        if (list.get(position).getRanking().getCampeonato() == null) {
+            for (int i = 0; i < list.size(); i++) {
 
                 itemViewHolder.pos.setText(String.valueOf(position + 1));
-                itemViewHolder.var.setVisibility(View.GONE);
-
-                Double diff = 0.00;
-
-                for (int i = 0; i < position; i++) {
-                    itemViewHolder.dif.setVisibility(View.VISIBLE);
-
-                    diff = item.get(position).getPontosrod()-item.get(0).getPontosrod();
-
-                }
-
-
-                if( position == 0) {
-                    itemViewHolder.dif.setVisibility(View.INVISIBLE);
-                }
-
-                itemViewHolder.dif.setText(String.valueOf(formatter.format(diff)));
-
-                id = item.get(position).getTimeId();
-
-                Integer finalId = id;
-                String finalQty = item.get(position).getQty();
-                Double finalParc = item.get(position).getParciais();
-                itemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                                                       @Override
-                                                       public void onClick( View v ) {
-                                                           Toast.makeText(context, String.valueOf(finalId), Toast.LENGTH_SHORT).show();
-                                                           SharedPreferences preferences = context.getSharedPreferences("SHARED_PREF_ID", MODE_PRIVATE);
-                                                           SharedPreferences.Editor editor = preferences.edit();
-
-                                                           editor.putString("ID_SHARED_PREF", String.valueOf(finalId));
-                                                           editor.putString(QTY_SHARED_PREF, finalQty);
-                                                           editor.putString(TOTAL_SHARED_PREF, String.valueOf(finalParc));
-
-
-                                                           Intent intent = new Intent(context, LigaActivity.class);
-                                                           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                           editor.apply();
-                                                           context.startActivity(intent);
-                                                       }
-                                                   }
-                );
+                //System.out.println(String.valueOf(position));
 
             }
 
-            if ( k == 3) {
-                item = database.getDESCTotalTimes();
-                Glide.with(context)
-                        .load(item.get(position).getUrlEscudoPng())
-                        .into(itemViewHolder.img_player);
+        } else {
+            Integer posicao = list.get(position).getRanking().getCampeonato();
+            String pos = String.valueOf(posicao);
+            itemViewHolder.pos.setText(pos);
+        }
 
-                itemViewHolder.name.setText(item.get(position).getNome());
-                itemViewHolder.ultima.setText(formatter.format(item.get(position).getParciais()));
-                itemViewHolder.points.setText(formatter.format(item.get(position).getPontosrod()));
+        if (list.get(position).getPontos().getCampeonato() == null) {
+            itemViewHolder.points.setText("0.00");
+        } else {
+            //System.out.println(list.get(position).getPontos().getCampeonato());
+            Double pontos = list.get(position).getPontos().getCampeonato();
+            String points = String.valueOf(formatter.format(pontos));
+            itemViewHolder.points.setText(points);
+        }
 
-                itemViewHolder.cash.setText(item.get(position).getQty());
-
-                itemViewHolder.pos.setText(String.valueOf(position + 1));
-                itemViewHolder.var.setVisibility(View.GONE);
-                itemViewHolder.dif.setVisibility(View.GONE);
-
-                id = item.get(position).getTimeId();
-
-                Integer finalId = id;
-                String finalQty = item.get(position).getQty();
-                Double finalParc = item.get(position).getParciais();
-                itemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                                                       @Override
-                                                       public void onClick( View v ) {
-                                                           Toast.makeText(context, String.valueOf(finalId), Toast.LENGTH_SHORT).show();
-                                                           SharedPreferences preferences = context.getSharedPreferences("SHARED_PREF_ID", MODE_PRIVATE);
-                                                           SharedPreferences.Editor editor = preferences.edit();
-
-                                                           editor.putString("ID_SHARED_PREF", String.valueOf(finalId));
-                                                           editor.putString(QTY_SHARED_PREF, finalQty);
-                                                           editor.putString(TOTAL_SHARED_PREF, String.valueOf(finalParc));
-
-
-                                                           Intent intent = new Intent(context, LigaActivity.class);
-                                                           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                           editor.apply();
-                                                           context.startActivity(intent);
-                                                       }
-                                                   }
-                );
+        if (list.get(position).getVariacao().getCampeonato() == null) {
+            itemViewHolder.var.setText("=");
+        } else {
+            Integer var = list.get(position).getVariacao().getCampeonato();
+            if (var > 0) {
+                String variacao = String.valueOf(var);
+                itemViewHolder.var.setText("+" + variacao);
+                itemViewHolder.var.setTextColor(Color.parseColor("#006400"));
             }
-
-            if ( k == 1 ) {
-                item = database.getASCTimes();
-                Glide.with(context)
-                        .load(item.get(position).getUrlEscudoPng())
-                        .into(itemViewHolder.img_player);
-
-                itemViewHolder.name.setText(item.get(position).getNome());
-                itemViewHolder.ultima.setText(formatter.format(item.get(position).getParciais()));
-                itemViewHolder.points.setText(formatter.format(item.get(position).getPontosrod()));
-
-                itemViewHolder.cash.setText(item.get(position).getQty());
-
-                itemViewHolder.pos.setText(String.valueOf(position + 1));
-                itemViewHolder.var.setVisibility(View.GONE);
-                itemViewHolder.dif.setVisibility(View.GONE);
-
-                id = item.get(position).getTimeId();
-
-                Integer finalId = id;
-                String finalQty = item.get(position).getQty();
-                Double finalParc = item.get(position).getParciais();
-                itemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                                                       @Override
-                                                       public void onClick( View v ) {
-                                                           Toast.makeText(context, String.valueOf(finalId), Toast.LENGTH_SHORT).show();
-                                                           SharedPreferences preferences = context.getSharedPreferences("SHARED_PREF_ID", MODE_PRIVATE);
-                                                           SharedPreferences.Editor editor = preferences.edit();
-
-                                                           editor.putString("ID_SHARED_PREF", String.valueOf(finalId));
-                                                           editor.putString(QTY_SHARED_PREF, finalQty);
-                                                           editor.putString(TOTAL_SHARED_PREF, String.valueOf(finalParc));
-
-
-                                                           Intent intent = new Intent(context, LigaActivity.class);
-                                                           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                           editor.apply();
-                                                           context.startActivity(intent);
-                                                       }
-                                                   }
-                );
-
-            } else if ( k == 2 ) {
-                item = database.getDESCTimes();
-                Glide.with(context)
-                        .load(item.get(position).getUrlEscudoPng())
-                        .into(itemViewHolder.img_player);
-
-                itemViewHolder.name.setText(item.get(position).getNome());
-                itemViewHolder.ultima.setText(formatter.format(item.get(position).getParciais()));
-                itemViewHolder.points.setText(formatter.format(item.get(position).getPontosrod()));
-
-                itemViewHolder.cash.setText(item.get(position).getQty());
-
-                itemViewHolder.pos.setText(String.valueOf(position + 1));
-                itemViewHolder.var.setVisibility(View.GONE);
-                itemViewHolder.dif.setVisibility(View.GONE);
-
-                id = item.get(position).getTimeId();
-
-                Integer finalId = id;
-                String finalQty = item.get(position).getQty();
-                Double finalParc = item.get(position).getParciais();
-
-                itemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                                                       @Override
-                                                       public void onClick( View v ) {
-                                                           Toast.makeText(context, String.valueOf(finalId), Toast.LENGTH_SHORT).show();
-                                                           SharedPreferences preferences = context.getSharedPreferences("SHARED_PREF_ID", MODE_PRIVATE);
-                                                           SharedPreferences.Editor editor = preferences.edit();
-
-                                                           editor.putString("ID_SHARED_PREF", String.valueOf(finalId));
-                                                           editor.putString(QTY_SHARED_PREF, finalQty);
-                                                           editor.putString(TOTAL_SHARED_PREF, String.valueOf(finalParc));
-
-
-                                                           Intent intent = new Intent(context, LigaActivity.class);
-                                                           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                           editor.apply();
-                                                           context.startActivity(intent);
-                                                       }
-                                                   }
-                );
+            if (var < 0) {
+                String variacao = String.valueOf(var);
+                itemViewHolder.var.setText(variacao);
+                itemViewHolder.var.setTextColor(Color.RED);
             }
+            if (var == 0) {
+                String variacao = String.valueOf(var);
+                itemViewHolder.var.setText("=");
+                itemViewHolder.var.setTextColor(Color.GRAY);
+            }
+        }
 
+        if (list.get(position).getPontos().getRodada() == null) {
+            itemViewHolder.ultima.setText("0.00");
+        } else {
+            Double ultima = list.get(position).getPontos().getRodada();
+            String rodada = String.valueOf(formatter.format(ultima));
+            itemViewHolder.ultima.setText(rodada);
+        }
 
+        Double cash = list.get(position).getPatrimonio();
+        String dinheiro = String.valueOf(formatter.format(cash));
+        itemViewHolder.cash.setText("$" + dinheiro);
+
+        String symbol = list.get(position).getUrl_escudo_png();
+        Glide.with(context)
+                .load(symbol)
+                .into(itemViewHolder.img_player);
 
 
     }
@@ -384,53 +210,6 @@ public class MyParcialSection extends StatelessSection {
         headerHolder.league_name.setText(title);
         headerHolder.league_ultima.setText("Parciais");
 
-        headerHolder.league_total.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (i == 0) {
-                    //Toast.makeText(context, String.valueOf(i), Toast.LENGTH_SHORT).show();
-                    isClicked = TRUE;
-
-                    LeagueActivity.sectionAdapter.notifyDataSetChanged();
-
-                    i++;
-                    k = 3;
-
-                }
-                else if (i == 1) {
-                    //Toast.makeText(context, String.valueOf(i), Toast.LENGTH_SHORT).show();
-                    isClicked = FALSE;
-
-                    LeagueActivity.sectionAdapter.notifyDataSetChanged();
-
-                    i = 0;
-                    k = 0;
-                }
-
-            }
-        });
-
-        headerHolder.league_ultima.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick( View v ) {
-                if (j == 0) {
-                    Toast.makeText(context, String.valueOf(j), Toast.LENGTH_SHORT).show();
-                    ultimaisClicked = TRUE;
-
-                    LeagueActivity.sectionAdapter.notifyDataSetChanged();
-                    j++;
-                    k = 1;
-                }
-                else if (j == 1) {
-                    Toast.makeText(context, String.valueOf(j), Toast.LENGTH_SHORT).show();
-
-                    ultimaisClicked = FALSE;
-                    LeagueActivity.sectionAdapter.notifyDataSetChanged();
-                    j = 0;
-                    k = 2;
-                }
-            }
-        });
 
     }
 

@@ -92,8 +92,8 @@ public class ParciaisActivity extends AppCompatActivity {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().create()))
-                .baseUrl("https://jsonkeeper.com")
-                //.baseUrl(CONSTANTS.BASE_URL)
+                //.baseUrl("https://jsonkeeper.com")
+                .baseUrl(CONSTANTS.BASE_URL)
                 .build();
 
         APIInterface service = retrofit.create(APIInterface.class);
@@ -185,12 +185,6 @@ public class ParciaisActivity extends AppCompatActivity {
 
         if (id == R.id.parciais) {
             Intent intent = new Intent(getApplicationContext(), ParciaisActivity.class);
-            startActivity(intent);
-            return true;
-        }
-
-        if (id == R.id.liga) {
-            Intent intent = new Intent(getApplicationContext(), Teste2Activity.class);
             startActivity(intent);
             return true;
         }

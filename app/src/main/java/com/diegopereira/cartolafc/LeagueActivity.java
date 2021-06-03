@@ -1,8 +1,15 @@
 package com.diegopereira.cartolafc;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,32 +27,28 @@ import com.diegopereira.cartolafc.league.DatabaseHelper;
 import com.diegopereira.cartolafc.league.League;
 import com.diegopereira.cartolafc.league.MyParcialSection;
 import com.diegopereira.cartolafc.league.MySection;
-import com.diegopereira.cartolafc.league.Players;
-import com.diegopereira.cartolafc.league.RequestInterface;
 import com.diegopereira.cartolafc.league.ServiceGenerator;
 import com.diegopereira.cartolafc.league.TimePontos;
 import com.diegopereira.cartolafc.league.Times;
-import com.diegopereira.cartolafc.parciais.Parciais;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.diegopereira.cartolafc.liga.Atleta;
+import com.diegopereira.cartolafc.parciais.Atletas;
+import com.diegopereira.cartolafc.parciais.Clubes;
+import com.diegopereira.cartolafc.parciais.Posicoes;
+import com.diegopereira.cartolafc.teste.Players;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.diegopereira.cartolafc.MainActivity.MAIN_SHARED_PREF;
 import static com.diegopereira.cartolafc.MainActivity.SHAREDMAIN_PREF_NAME;
@@ -58,11 +61,20 @@ import static com.diegopereira.cartolafc.WebViewActivity.SHARED_PREF_NAME;
 import static com.diegopereira.cartolafc.WebViewActivity.SHARED_TOKEN;
 
 
-public class LeagueActivity extends AppCompatActivity {
+public class LeagueActivity extends AppCompatActivity implements ServiceConnection {
+    private ChamadaMetodo s;
+
     SharedPreferences preferences, token_preferences;
     String slug;
     RecyclerView recyclerView;
     public static List<Times> list = new ArrayList<>();
+    List<Map.Entry<String, Atletas>> wordList = new ArrayList<Map.Entry<String, Atletas>>();
+
+    Set<Map.Entry<String, Atletas>> set;
+    List<Map.Entry<String, Atletas>> list2;
+    public static List<com.diegopereira.cartolafc.teste.Atletas> atletas = new ArrayList<>();;
+    Map<Integer, Posicoes> posicoes = new HashMap();
+    Map<Integer, Clubes> clubes = new HashMap();
 
     Map<String, Double> mapparciais = new HashMap<>(); //
     public static ArrayList<TimePontos> teste = new ArrayList<>();
@@ -71,7 +83,7 @@ public class LeagueActivity extends AppCompatActivity {
 
     private DatabaseHelper database;
 
-
+    Integer times_id;
     TextView total, ultima;
     String atleta_ids;
 
@@ -84,8 +96,10 @@ public class LeagueActivity extends AppCompatActivity {
     private ProgressBar loadProgress;
 
 
+
+
     @Override
-    protected void onCreate( Bundle savedInstanceState ) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.league);
 
@@ -102,9 +116,11 @@ public class LeagueActivity extends AppCompatActivity {
                     loadLeague();
                 }
                 if (stat.equals("2")) {
-                    teste.clear();
+                    //teste.clear();
+
                     loadParciais();
-                    database.delete();
+
+                    //database.delete();
 
                 }
                 pullToRefresh.setRefreshing(false);
@@ -121,14 +137,13 @@ public class LeagueActivity extends AppCompatActivity {
         System.out.println(stat);
 
 
-
         token_preferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         token = token_preferences.getString(SHARED_TOKEN, "");
         preferences = getSharedPreferences(SHARED_PREF_SLUG, MODE_PRIVATE);
         slug = preferences.getString(SLUG_SHARED_PREF, "");
         nome = preferences.getString(NAME_SHARED_PREF, "");
         System.out.println(slug);
-        Toast.makeText(getApplicationContext(), slug + " Activity", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), slug + " Activity", Toast.LENGTH_SHORT).show();
 
         loadProgress = (ProgressBar) findViewById(R.id.leagueprogressBar);
         recyclerView = findViewById(R.id.rv_league);
@@ -138,34 +153,41 @@ public class LeagueActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
-
-
-
         if (stat.equals("1") || stat.equals("6")) {
 
             loadLeague();
 
-        } if (stat.equals("2")) {
-
-            com.diegopereira.cartolafc.league.MyParcialSection section2 = new MyParcialSection(getApplicationContext(), nome, teste, mapparciais);
-            sectionAdapter.addSection(section2);
-
-            recyclerView.setAdapter(sectionAdapter);
-            database = new DatabaseHelper(getApplicationContext());
-            getApplicationContext().deleteDatabase(database.getDatabaseName());
-
-            for (int j = 0; j < 28; j++) {
-                database.insert("nome", 0.0, 0.0, "", "", 0);
-            }
+        }
+        if (stat.equals("2")) {
 
 
-            loadParciais();
+            Handler handler = new Handler();
+            long delay = 2000; // tempo de delay em millisegundos
+            handler.postDelayed(new Runnable() {
+                public void run() {
+
+                    loadParciais();
+//                    MyParcialSection section2 = new MyParcialSection(getApplicationContext(), "Teste", list, atletas, wordList);
+//                    sectionAdapter.addSection(section2);
+//                    recyclerView.setAdapter(sectionAdapter);
+                }
+            }, delay);
+
         }
 
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = new Intent(this, ChamadaMetodo.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+    }
 
-
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(this);
     }
 
     private void loadLeague() {
@@ -181,16 +203,10 @@ public class LeagueActivity extends AppCompatActivity {
 
                 //sortTotalDESC();
 
-
-                com.diegopereira.cartolafc.league.MySection section1 = new MySection(getApplicationContext() ,  nome, list);
+                com.diegopereira.cartolafc.league.MySection section1 = new MySection(getApplicationContext(), nome, list);
                 sectionAdapter.addSection(section1);
                 //sectionAdapter.notifyDataSetChanged();
                 recyclerView.setAdapter(sectionAdapter);
-
-
-
-
-
 
             }
 
@@ -203,7 +219,19 @@ public class LeagueActivity extends AppCompatActivity {
 
     private void loadParciais() {
 
-        //teste.clear();
+        Intent service = new Intent(getApplicationContext(), ChamadaMetodo.class);
+        getApplicationContext().startService(service);
+
+        //System.out.println(s.getWordList().toString());
+        if (s != null) {
+            Toast.makeText(getApplicationContext(), "Number of elements: " + s.getWordList().size(),
+                    Toast.LENGTH_SHORT).show();
+            wordList.clear();
+            wordList.addAll(s.getWordList());
+
+        } else {
+            System.out.println(s.getWordList().toString());
+        }
 
 
         APIInterface league = ServiceGenerator.getRetrofit().create(APIInterface.class);
@@ -213,193 +241,120 @@ public class LeagueActivity extends AppCompatActivity {
             public void onResponse(Call<League> call, Response<League> response) {
                 loadProgress.setVisibility(View.GONE);
 
-                //System.out.println(response.body().getTimes());
+                System.out.println(response.body().getTimes());
                 list = response.body().getTimes();
 
+                com.diegopereira.cartolafc.teste.APIInterface status = com.diegopereira.cartolafc.teste.ServiceGenerator.getRetrofit().create(com.diegopereira.cartolafc.teste.APIInterface.class);
 
-
-
-
-                RequestInterface requestInterface = ServiceGenerator.getRetrofit().create(RequestInterface.class);
                 for (int i = 0; i < list.size(); i++) {
+                    times_id = list.get(i).getTime_id();
+                    Call<Players> call_players = status.getTime(times_id.toString());
 
-
-
-                    Call<Players> parciaiscall = requestInterface.getTime(list.get(i).getTime_id().toString());
-                    int finalI = i;
-                    parciaiscall.enqueue(new Callback<Players>() {
+                    call_players.enqueue(new Callback<Players>() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
                         @Override
-                        public void onResponse(Call<Players> call, Response<Players> response) {
-                            System.out.println("Get Atletas: " + response.body().getAtletas().toString());
-
-                            com.diegopereira.cartolafc.league.TimePontos times = new TimePontos();
-                            times.setNome(response.body().getTime().getNome());
-                            times.setPontos(response.body().getPontosCampeonato());
-                            times.setAtletas(response.body().getAtletas());
-                            times.setCapitaoId(response.body().getCapitaoId());
-                            times.setUrlEscudoPng(response.body().getTime().getUrl_escudo_png());
-                            times.setTimeId(list.get(finalI).getTime_id());
-
-                            teste.add(times);
+                        public void onResponse(Call<Players> call_players, Response<Players> response) {
+                            //if (response.isSuccessful()) {
+                            response.code();
+                            atletas = response.body().getAtletas();
+                            MyParcialSection section2 = new MyParcialSection(getApplicationContext(), "Teste", list, atletas, wordList);
+                            sectionAdapter.addSection(section2);
+                            recyclerView.setAdapter(sectionAdapter);
+                            sectionAdapter.notifyDataSetChanged();
 
 
-
-
-                            final Gson gson = new GsonBuilder()
-                                    .setLenient()
-                                    .serializeNulls()
-                                    .create();
-                            Retrofit retrofit = new Retrofit.Builder()
-                                    .addConverterFactory(GsonConverterFactory.create(gson))
-                                    .baseUrl(CONSTANTS.BASE_URL)
-                                    .build();
-                            com.diegopereira.cartolafc.parciais.APIInterface requestInterface = retrofit.create(com.diegopereira.cartolafc.parciais.APIInterface.class);
-                            Call<Parciais> call2 = requestInterface.getAtletas();
-
-                            call2.enqueue(new Callback<Parciais>() {
-
-                                @RequiresApi(api = Build.VERSION_CODES.N)
-                                @Override
-                                public void onResponse(Call<Parciais> call, Response<Parciais> response) {
-                                    loadProgress.setVisibility(View.GONE);
-
-                                    if (response.code() == 200) {
-
-                                        try {
-                                            // edited here ,add toJson
-                                            String jsonResponse = new Gson().toJson(response.body());
-                                            JSONObject jsonObject = null;
-                                            if (jsonResponse != null) {
-                                                try {
-                                                    jsonObject = new JSONObject(jsonResponse);
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                String rodada = jsonObject.optString("rodada");
-                                                JSONObject key2 = jsonObject.optJSONObject("atletas");
-
-                                                Iterator<String> sIterator = key2.keys();
-
-                                                //mapparciais = new HashMap<>();
-
-                                                while (sIterator.hasNext()) {
-                                                    atleta_ids = sIterator.next();
-                                                    JSONObject atletas = key2.optJSONObject(atleta_ids);
-
-                                                    String apelido = atletas.getString("apelido");
-
-                                                    pontos = atletas.getDouble("pontuacao");
-                                                    //System.out.println("Atletas IDS: " + atleta_ids);
-
-                                                    mapparciais.put(atleta_ids, pontos);
-                                                    //System.out.println("MAPPARCIAISACT: " + mapparciais);
-
-                                                }
-                                            }
-
-
-
-                                            sectionAdapter.notifyDataSetChanged();
-
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<Parciais> call, Throwable t) {
-                                    System.out.println(t.getMessage());
-                                }
-                            });
-
+                            //}
                         }
-
-
-
-
-
-
 
                         @Override
                         public void onFailure(Call<Players> call, Throwable t) {
-
+                            Log.e("ERROR", t.getMessage());
                         }
                     });
+
 
                 }
 
 
 
 
+
             }
+
 
             @Override
             public void onFailure(Call<League> call, Throwable t) {
 
             }
+
+
         });
 
-        }
 
 
 
+    }
 
-//        public static void sortTotalDESC() {
-//
-//                    Collections.sort(list, new Comparator<Times>() {
-//                        @Override
-//                        public int compare(Times o1, Times o2) {
-//                            return (o1.getRanking().getCampeonato()).compareTo(o2.getRanking().getCampeonato());
-//                        }
-//                    });
-//            sectionAdapter.notifyDataSetChanged();
-//
-//        }
-//
-//
-//    public static void sortTotalASC() {
-//
-//        Collections.sort(list, new Comparator<Times>() {
-//            @Override
-//            public int compare(Times o1, Times o2) {
-//                return (o2.getRanking().getCampeonato()).compareTo(o1.getRanking().getCampeonato());
-//            }
-//        });
-//        sectionAdapter.notifyDataSetChanged();
-//
-//    }
-//
-//    public static void sortUltimaASC() {
-//
-//        Collections.sort(list, new Comparator<Times>() {
-//            @Override
-//            public int compare(Times o1, Times o2) {
-//                return (o2.getPontos().getRodada()).compareTo(o1.getPontos().getRodada());
-//            }
-//        });
-//        sectionAdapter.notifyDataSetChanged();
-//
-//    }
-//
-//    public static void sortUltimaDESC() {
-//
-//        Collections.sort(list, new Comparator<Times>() {
-//            @Override
-//            public int compare(Times o1, Times o2) {
-//                return (o1.getPontos().getRodada()).compareTo(o2.getPontos().getRodada());
-//            }
-//        });
-//        sectionAdapter.notifyDataSetChanged();
-//
-//    }
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder binder) {
+        ChamadaMetodo.MyBinder b = (ChamadaMetodo.MyBinder) binder;
+        s = b.getService();
+        Toast.makeText(LeagueActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        s = null;
+    }
+
+    public static void sortTotalDESC() {
+
+        Collections.sort(list, new Comparator<Times>() {
+            @Override
+            public int compare(Times o1, Times o2) {
+                return (o1.getRanking().getCampeonato()).compareTo(o2.getRanking().getCampeonato());
+            }
+        });
+        sectionAdapter.notifyDataSetChanged();
+
+    }
 
 
+    public static void sortTotalASC() {
 
+        Collections.sort(list, new Comparator<Times>() {
+            @Override
+            public int compare(Times o1, Times o2) {
+                return (o2.getRanking().getCampeonato()).compareTo(o1.getRanking().getCampeonato());
+            }
+        });
+        sectionAdapter.notifyDataSetChanged();
 
+    }
 
+    public static void sortUltimaASC() {
+
+        Collections.sort(list, new Comparator<Times>() {
+            @Override
+            public int compare(Times o1, Times o2) {
+                return (o2.getPontos().getRodada()).compareTo(o1.getPontos().getRodada());
+            }
+        });
+        sectionAdapter.notifyDataSetChanged();
+
+    }
+
+    public static void sortUltimaDESC() {
+
+        Collections.sort(list, new Comparator<Times>() {
+            @Override
+            public int compare(Times o1, Times o2) {
+                return (o1.getPontos().getRodada()).compareTo(o2.getPontos().getRodada());
+            }
+        });
+        sectionAdapter.notifyDataSetChanged();
+
+    }
 
 
     @Override

@@ -23,8 +23,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    //Teste GIT
-    //Teste
     private Button button;
 
     private TextView tv_rodada, tv_status, tv_times_escalados, tv_fechamento;
@@ -157,21 +155,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.liga) {
-            Intent intent = new Intent(getApplicationContext(), Teste2Activity.class);
-            startActivity(intent);
-            return true;
-        }
         if (id == R.id.classi) {
             Intent intent = new Intent(getApplicationContext(), ClassificacaoActivity.class);
             startActivity(intent);
             return true;
         }
-        /*if (id == R.id.login) {
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(intent);
-            return true;
-        } */
         if (id == R.id.login) {
             Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
             startActivity(intent);

@@ -98,9 +98,9 @@ public class MySection extends Section {
 
         for (int i = 0; i < position; i++) {
             itemViewHolder.fav_dif.setVisibility(View.VISIBLE);
-
-            diff = list.get(position).getPontos()-list.get(0).getPontos();
-
+            if (list.get(position).getPontos() != null) {
+                diff = list.get(position).getPontos() - list.get(0).getPontos();
+            }
         }
 
 

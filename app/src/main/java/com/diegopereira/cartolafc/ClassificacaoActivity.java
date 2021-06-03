@@ -260,13 +260,7 @@ public class ClassificacaoActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.liga) {
-            Intent intent = new Intent(getApplicationContext(), LigaActivity.class);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+       return super.onOptionsItemSelected(item);
     }
 
 }

@@ -1,24 +1,31 @@
 package com.diegopereira.cartolafc.liga;
 
+import com.diegopereira.cartolafc.parciais.Escudos;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Posicoes {
+public class Clubes {
     @SerializedName("id")
     @Expose
-    private String id;
+    private Integer id;
     @SerializedName("nome")
     @Expose
     private String nome;
     @SerializedName("abreviacao")
     @Expose
     private String abreviacao;
+    @SerializedName("nome_fantasia")
+    @Expose
+    private String nome_fantasia;
+    @SerializedName("escudos")
+    @Expose
+    private Escudos escudos;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId( String id ) {
+    public void setId( Integer id ) {
         this.id = id;
     }
 
@@ -36,5 +43,21 @@ public class Posicoes {
 
     public void setAbreviacao( String abreviacao ) {
         this.abreviacao = abreviacao;
+    }
+
+    public String getNome_fantasia() {
+        return nome_fantasia;
+    }
+
+    public void setNome_fantasia( String nome_fantasia ) {
+        this.nome_fantasia = nome_fantasia;
+    }
+
+    public Escudos getEscudos() {
+        return escudos;
+    }
+
+    public void setEscudos( Escudos escudos ) {
+        this.escudos = escudos;
     }
 }
