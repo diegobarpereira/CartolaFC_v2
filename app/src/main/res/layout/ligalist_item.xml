@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#000000"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -32,6 +33,7 @@
         android:src="@drawable/cap"
         tools:ignore="MissingConstraints" />
 
+
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_toRightOf="@+id/img_clube"
         android:id="@+id/tv_jogador"
@@ -41,8 +43,10 @@
         android:text="Jogador"
         android:textStyle="bold"
         android:textSize="12sp"
+        android:textColor="#FFFFFF"
         android:textAlignment="center"
         tools:ignore="MissingConstraints,RtlCompat" />
+
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_posicao"
@@ -53,6 +57,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="2dp"
         android:layout_marginBottom="5dp"
+        android:textColor="#FFFFFF"
         android:layout_toRightOf="@+id/img_clube"
         android:text="Posição"
         android:textAlignment="center"
@@ -60,8 +65,7 @@
         tools:ignore="MissingConstraints,RtlCompat" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:layout_marginEnd="5dp"
-        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
         android:id="@+id/tv_pontos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,6 +74,20 @@
         android:text="pontos"
         android:textAlignment="center"
         android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        tools:ignore="MissingConstraints,RtlCompat" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_below="@id/tv_pontos"
+        android:layout_margin="5dp"
+        android:id="@+id/tv_scouts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:text="SCOUTS"
+        android:textAlignment="center"
+        android:textSize="10sp"
+        android:textColor="#FFFFFF"
         tools:ignore="MissingConstraints,RtlCompat" />
 
 </RelativeLayout>

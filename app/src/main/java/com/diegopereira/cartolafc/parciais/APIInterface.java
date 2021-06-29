@@ -15,8 +15,8 @@ public interface APIInterface {
    // @Headers("Content-Type: application/json")
 
     //@GET("/b/WQV8")
-    @GET("267cde4c-1d8f-4870-ab1d-a68f7f3c0290")
-    //@GET("/atletas/pontuados/")
+    //@GET("267cde4c-1d8f-4870-ab1d-a68f7f3c0290")
+    @GET("/atletas/pontuados/")
     Call<Parciais> getAtletas();
 
 }

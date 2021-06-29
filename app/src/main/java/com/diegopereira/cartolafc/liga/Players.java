@@ -11,6 +11,11 @@ package com.diegopereira.cartolafc.liga;
         @SerializedName("atletas")
         @Expose
         private List<Atleta> atletas = null;
+
+        @SerializedName("reservas")
+        @Expose
+        private List<Atleta> reservas = null;
+
         @SerializedName("clubes")
         @Expose
         private Map<Integer, Clubes> clubes;
@@ -55,6 +60,14 @@ package com.diegopereira.cartolafc.liga;
 
         public void setAtletas(List<Atleta> atletas) {
             this.atletas = atletas;
+        }
+
+        public List<Atleta> getReservas() {
+            return reservas;
+        }
+
+        public void setReservas(List<Atleta> reservas) {
+            this.reservas = reservas;
         }
 
         public Map<Integer, Clubes> getClubes() {

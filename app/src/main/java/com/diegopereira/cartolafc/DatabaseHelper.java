@@ -112,9 +112,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
+        if (cursor.moveToFirst()) {
+            do {
+                cursor.getString(1);
+
+
+            } while (cursor.moveToNext());
         }
+        db.close();
         return cursor;
     }
 

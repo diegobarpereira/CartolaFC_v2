@@ -1,5 +1,6 @@
 package com.diegopereira.cartolafc.league;
 
+import com.diegopereira.cartolafc.liga.Reservas;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -10,9 +11,7 @@ public class League {
     @Expose
     private List<Times> times = null;
 
-    @SerializedName("atletas")
-    @Expose
-    private List<Atleta> atletas;
+
 
     public List<Times> getTimes() {
         return times;
@@ -22,11 +21,5 @@ public class League {
         this.times = times;
     }
 
-    public List<Atleta> getAtletas() {
-        return atletas;
-    }
 
-    public void setAtletas(List<Atleta> atletas) {
-        this.atletas = atletas;
-    }
 }

@@ -1,11 +1,12 @@
 package com.diegopereira.cartolafc.league;
 
+import com.diegopereira.cartolafc.liga.Atleta;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Times {
+public class Times implements Comparable<Times> {
     @SerializedName("url_escudo_png")
     @Expose
     private String url_escudo_png;
@@ -54,6 +55,19 @@ public class Times {
     @SerializedName("atletas")
     @Expose
     private List<Atleta> atletas;
+
+    @SerializedName("total")
+    @Expose
+    private Double total;
+
+    @SerializedName("pontosParciais")
+    @Expose
+    private Double pontosParciais;
+
+    @SerializedName("new_variacao")
+    @Expose
+    private Integer new_variacao;
+
 
     public List<Atleta> getAtletas() {
         return atletas;
@@ -181,5 +195,34 @@ public class Times {
 
     public void setVariacao(Variacao variacao) {
         this.variacao = variacao;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
+
+    public Double getPontosParciais() {
+        return pontosParciais;
+    }
+
+    public void setPontosParciais(Double pontosParciais) {
+        this.pontosParciais = pontosParciais;
+    }
+
+    public Integer getNew_variacao() {
+        return new_variacao;
+    }
+
+    public void setNew_variacao(Integer new_variacao) {
+        this.new_variacao = new_variacao;
+    }
+
+    @Override
+    public int compareTo(Times o) {
+        return Double.compare(getTotal(), o.getTotal());
     }
 }

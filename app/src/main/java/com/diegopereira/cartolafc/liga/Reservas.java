@@ -1,11 +1,9 @@
-package com.diegopereira.cartolafc.league;
+package com.diegopereira.cartolafc.liga;
 
-import com.diegopereira.cartolafc.liga.Scout;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Atleta {
-
+public class Reservas {
     @SerializedName("nome")
     @Expose
     private String nome;
@@ -171,5 +169,4 @@ public class Atleta {
     public void setScout(Scout scout) {
         this.scout = scout;
     }
-
 }

@@ -10,9 +10,6 @@ import java.util.List;
 
 public class Players {
 
-    @SerializedName("atletas")
-    @Expose
-    private List<Atleta> atletas = null;
 
     @SerializedName("posicoes")
     @Expose
@@ -42,14 +39,6 @@ public class Players {
     @SerializedName("time")
     @Expose
     private Times time;
-
-    public List<Atleta> getAtletas() {
-        return atletas;
-    }
-
-    public void setAtletas(List<Atleta> atletas) {
-        this.atletas = atletas;
-    }
 
 
     public Posicoes getPosicoes() {

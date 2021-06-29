@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +34,7 @@ import com.diegopereira.cartolafc.liga.Atleta;
 import com.diegopereira.cartolafc.liga.Clubes;
 import com.diegopereira.cartolafc.liga.LigaRecyclerAdapter;
 import com.diegopereira.cartolafc.liga.LigaRodadaAdapter;
+import com.diegopereira.cartolafc.liga.MyParcialSection;
 import com.diegopereira.cartolafc.liga.Players;
 import com.diegopereira.cartolafc.liga.Posicoes;
 import com.diegopereira.cartolafc.liga.ServiceGenerator;
@@ -48,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,6 +66,7 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
 
     RecyclerView recyclerView;
     List<Atleta> list = new ArrayList<>();
+    List<Atleta> reservas = new ArrayList<>();
     Map<Integer, Clubes> clubes = new HashMap();
     Map<Integer, Posicoes> posicoes = new HashMap();
     Integer capitao, atleta_id;
@@ -80,7 +84,10 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
     AppCompatImageView img_time;
 
     LigaRecyclerAdapter adapter;
-    LigaRodadaAdapter rodadapter;
+    //LigaRodadaAdapter rodadapter;
+
+    public static SectionedRecyclerViewAdapter sectionAdapter;
+
 
     SharedPreferences preferences;
     SharedPreferences sharedPref;
@@ -99,12 +106,20 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
         tv_timetot = (AppCompatTextView) findViewById(R.id.tv_timetot);
         tv_qty = (AppCompatTextView) findViewById(R.id.tv_qty);
 
+        sectionAdapter = new SectionedRecyclerViewAdapter();
+
+
         recyclerView = findViewById(R.id.rv_liga);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(manager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{0xfff7f7f7, 0xfff7f7f7});
+        drawable.setSize(1,1);
+        itemDecoration.setDrawable(drawable);
+        recyclerView.addItemDecoration(itemDecoration);
+        recyclerView.setAdapter(sectionAdapter);
 
         preferences = getSharedPreferences("SHARED_PREF_ID", MODE_PRIVATE);
 
@@ -113,16 +128,14 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
         qty = preferences.getString(QTY_SHARED_PREF, String.valueOf("0/0"));
 
         sharedPref = getSharedPreferences(SHAREDMAIN_PREF_NAME, MODE_PRIVATE);
-        //stat = sharedPref.getString(MAIN_SHARED_PREF, "N/A");
-        stat = "2";
+        stat = sharedPref.getString(MAIN_SHARED_PREF, "N/A");
+        //stat = "2";
 
         if (stat.equals("1")) {
             loadLiga();
 
         }
         if (stat.equals("2")) {
-            //loadLiga();
-
             Handler handler = new Handler();
             long delay = 2000; // tempo de delay em millisegundos
             handler.postDelayed(new Runnable() {
@@ -143,8 +156,8 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
 
                 }
                 if (stat.equals("2")) {
-                    //loadLiga();
-                    rodadapter.notifyDataSetChanged();
+                    sectionAdapter.removeAllSections();
+                    sectionAdapter.notifyDataSetChanged();
                     loadParciais();
                 }
 
@@ -200,8 +213,15 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
                     } else {
 
                         list = response.body().getAtletas();
+                        reservas = response.body().getReservas();
 
                         Collections.sort(list, new Comparator<Atleta>() {
+                            @Override
+                            public int compare(Atleta o1, Atleta o2) {
+                                return o1.getPosicaoId().compareTo(o2.getPosicaoId());
+                            }
+                        });
+                        Collections.sort(reservas, new Comparator<Atleta>() {
                             @Override
                             public int compare(Atleta o1, Atleta o2) {
                                 return o1.getPosicaoId().compareTo(o2.getPosicaoId());
@@ -216,7 +236,7 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
                         clubes = response.body().getClubes();
                         posicoes = response.body().getPosicoes();
 
-                        if (stat.equals("1")) {
+
                             timepts = response.body().getPontos();
                             tv_timepts.setText(String.format(Locale.US, "%.2f", timepts));
                             timetot = response.body().getPontosCampeonato();
@@ -225,7 +245,7 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
                             adapter = new LigaRecyclerAdapter(getApplicationContext(), list, capitao, posicoes, clubes);
                             adapter.notifyDataSetChanged();
                             recyclerView.setAdapter(adapter);
-                        }
+
 
                     }
                 }
@@ -272,8 +292,15 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
                             .into(img_time);
 
                     list = response.body().getAtletas();
+                    reservas = response.body().getReservas();
 
                     Collections.sort(list, new Comparator<Atleta>() {
+                        @Override
+                        public int compare(Atleta o1, Atleta o2) {
+                            return o1.getPosicaoId().compareTo(o2.getPosicaoId());
+                        }
+                    });
+                    Collections.sort(reservas, new Comparator<Atleta>() {
                         @Override
                         public int compare(Atleta o1, Atleta o2) {
                             return o1.getPosicaoId().compareTo(o2.getPosicaoId());
@@ -296,9 +323,17 @@ public class LigaActivity extends AppCompatActivity implements ServiceConnection
 
                     }
 
-                    rodadapter = new LigaRodadaAdapter(getApplicationContext(), list, capitao, posicoes, clubes, wordList);
-                    rodadapter.notifyDataSetChanged();
-                    recyclerView.setAdapter(rodadapter);
+                    String tit_title = "Titulares";
+                    String res_title = "Reservas";
+
+                    MyParcialSection tit_section = new MyParcialSection(getApplicationContext(), tit_title, list, clubes, posicoes, wordList, capitao);
+                    sectionAdapter.addSection(tit_section);
+
+                    MyParcialSection res_section = new MyParcialSection(getApplicationContext(), res_title, reservas, clubes, posicoes, wordList, capitao);
+                    sectionAdapter.addSection(res_section);
+                    sectionAdapter.notifyDataSetChanged();
+
+
                 }
             }
 

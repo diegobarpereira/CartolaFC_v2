@@ -1,6 +1,5 @@
 package com.diegopereira.cartolafc.groups;
 
-import com.diegopereira.cartolafc.league.Atleta;
 import com.diegopereira.cartolafc.league.Pontos;
 import com.diegopereira.cartolafc.league.Ranking;
 import com.diegopereira.cartolafc.league.Variacao;
@@ -55,17 +54,9 @@ public class Times {
     @SerializedName("variacao")
     @Expose
     private Variacao variacao;
-    @SerializedName("atletas")
-    @Expose
-    private List<Atleta> atletas;
 
-    public List<Atleta> getAtletas() {
-        return atletas;
-    }
 
-    public void setAtletas(List<Atleta> atletas) {
-        this.atletas = atletas;
-    }
+
 
     public String getUrl_escudo_png() {
         return url_escudo_png;

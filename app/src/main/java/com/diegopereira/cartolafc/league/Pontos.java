@@ -3,6 +3,8 @@ package com.diegopereira.cartolafc.league;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Comparator;
+
 public class Pontos {
     @SerializedName("rodada")
     @Expose
@@ -19,6 +21,9 @@ public class Pontos {
     @SerializedName("capitao")
     @Expose
     private Integer capitao;
+    @SerializedName("total")
+    @Expose
+    private Double total;
 
     public Double getRodada() {
         return rodada;
@@ -59,4 +64,15 @@ public class Pontos {
     public void setCapitao(Integer capitao) {
         this.capitao = capitao;
     }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
+
+
 }
+

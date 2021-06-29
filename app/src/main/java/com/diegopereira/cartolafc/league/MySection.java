@@ -198,7 +198,7 @@ public class MySection extends Section {
         MyHeaderViewHolder headerHolder = (MyHeaderViewHolder) holder;
 
         headerHolder.league_name.setText(title);
-
+        headerHolder.league_ultima.setText("Rodada");
 
 //        headerHolder.league_total.setOnClickListener(new View.OnClickListener() {
 //            @Override

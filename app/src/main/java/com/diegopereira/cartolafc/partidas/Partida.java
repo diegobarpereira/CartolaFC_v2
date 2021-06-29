@@ -49,6 +49,12 @@ public class Partida {
     @SerializedName("url_transmissao")
     @Expose
     private String urlTransmissao;
+    @SerializedName("periodo_tr")
+    @Expose
+    private String periodo_tr;
+    @SerializedName("transmissao")
+    @Expose
+    private Transmissao transmissao;
 
     public Integer getPartidaId() {
         return partidaId;
@@ -230,6 +236,22 @@ public class Partida {
     public Partida withUrlTransmissao(String urlTransmissao) {
         this.urlTransmissao = urlTransmissao;
         return this;
+    }
+
+    public String getPeriodo_tr() {
+        return periodo_tr;
+    }
+
+    public void setPeriodo_tr(String periodo_tr) {
+        this.periodo_tr = periodo_tr;
+    }
+
+    public Transmissao getTransmissao() {
+        return transmissao;
+    }
+
+    public void setTransmissao(Transmissao transmissao) {
+        this.transmissao = transmissao;
     }
 
     @Override

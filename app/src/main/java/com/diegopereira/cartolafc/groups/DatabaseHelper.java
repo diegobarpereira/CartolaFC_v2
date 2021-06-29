@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.diegopereira.cartolafc.league.TimePontos;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,80 +133,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return array_list;
     }
 
-    public List<TimePontos> getDESCTotalTimes() {
-        List<TimePontos> array_list = new ArrayList<>();
 
-        String sql = "SELECT * FROM " + TABLE_NAME+" ORDER BY CAST(total AS REAL) DESC";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, null);
 
-        if (cursor.moveToFirst()) {
-            do {
-                TimePontos timePontos = new TimePontos();
-                timePontos.setNome(cursor.getString(1));
-                timePontos.setParciais(cursor.getDouble(2));
-                timePontos.setPontosrod(cursor.getDouble(3));
-                timePontos.setUrlEscudoPng(cursor.getString(4));
-                timePontos.setQty(cursor.getString(5));
-                timePontos.setTimeId(cursor.getInt(6));
 
-                array_list.add(0, timePontos);
-            } while (cursor.moveToNext());
-        }
 
-        db.close();
-        return array_list;
-    }
-
-    public List<TimePontos> getDESCTimes() {
-        List<TimePontos> array_list = new ArrayList<>();
-
-        String sql = "SELECT * FROM " + TABLE_NAME+" ORDER BY CAST(parciais AS REAL) DESC";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                TimePontos timePontos = new TimePontos();
-                timePontos.setNome(cursor.getString(1));
-                timePontos.setParciais(cursor.getDouble(2));
-                timePontos.setPontosrod(cursor.getDouble(3));
-                timePontos.setUrlEscudoPng(cursor.getString(4));
-                timePontos.setQty(cursor.getString(5));
-                timePontos.setTimeId(cursor.getInt(6));
-
-                array_list.add(0, timePontos);
-            } while (cursor.moveToNext());
-        }
-
-        db.close();
-        return array_list;
-    }
-
-    public List<TimePontos> getASCTimes() {
-        List<TimePontos> array_list = new ArrayList<>();
-
-        String sql = "SELECT * FROM " + TABLE_NAME+" ORDER BY CAST(parciais AS REAL) ASC";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                TimePontos timePontos = new TimePontos();
-                timePontos.setNome(cursor.getString(1));
-                timePontos.setParciais(cursor.getDouble(2));
-                timePontos.setPontosrod(cursor.getDouble(3));
-                timePontos.setUrlEscudoPng(cursor.getString(4));
-                timePontos.setQty(cursor.getString(5));
-                timePontos.setTimeId(cursor.getInt(6));
-
-                array_list.add(0, timePontos);
-            } while (cursor.moveToNext());
-        }
-
-        db.close();
-        return array_list;
-    }
 
     public Cursor fetch() {
         String sql = "SELECT * FROM " + TABLE_NAME+" ORDER BY cast(total AS REAL) DESC";
